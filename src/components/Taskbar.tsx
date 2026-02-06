@@ -31,14 +31,16 @@ function Taskbar({ windows, onWindowClick }: TaskbarProps) {
 
   return (
     <div
-      className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-b from-blue-500 to-blue-600 border-t-2 border-white flex items-center px-2 gap-2"
+      className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-b from-blue-500 to-blue-600 border-t-2 border-white flex items-center px-2 gap-2 z-[9999]"
       style={{
         boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.5), 0 -2px 4px rgba(0,0,0,0.3)',
         fontFamily: '"MS Sans Serif", "Pixelify Sans", monospace',
       }}
     >
+      {/* КНОПКА START С ФУНКЦИЕЙ ПЕРЕЗАГРУЗКИ */}
       <button
-        className="h-9 px-4 bg-green-600 hover:bg-green-700 text-white font-bold rounded flex items-center gap-2 border-2 border-green-800"
+        onClick={() => window.location.reload()}
+        className="h-9 px-4 bg-green-600 hover:bg-green-700 text-white font-bold rounded flex items-center gap-2 border-2 border-green-800 transition-colors active:scale-95"
         style={{
           boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3), 2px 2px 0 rgba(0,0,0,0.3)',
         }}
@@ -47,14 +49,14 @@ function Taskbar({ windows, onWindowClick }: TaskbarProps) {
         <span>Start</span>
       </button>
 
-      <div className="flex-1 flex gap-1 overflow-x-auto">
+      <div className="flex-1 flex gap-1 overflow-x-auto no-scrollbar">
         {windows.map(window => (
           <button
             key={window.id}
             onClick={() => onWindowClick(window.id)}
-            className={`h-9 px-3 text-sm font-bold border-2 flex items-center gap-2 ${
+            className={`h-9 px-3 text-[11px] font-bold border-2 flex items-center gap-2 transition-all ${
               window.isMinimized
-                ? 'bg-blue-400 border-blue-600'
+                ? 'bg-blue-400 border-blue-600 opacity-70'
                 : 'bg-blue-300 border-blue-700'
             }`}
             style={{
@@ -63,21 +65,21 @@ function Taskbar({ windows, onWindowClick }: TaskbarProps) {
                 : 'inset 0 1px 0 rgba(255,255,255,0.5), 2px 2px 0 rgba(0,0,0,0.2)',
             }}
           >
-            <span className="truncate max-w-[150px]">{window.title}</span>
+            <span className="truncate max-w-[100px] md:max-w-[150px]">{window.title}</span>
           </button>
         ))}
       </div>
 
       <div
-        className="h-9 px-3 bg-blue-400 border-2 border-blue-700 flex items-center gap-2 text-xs font-bold"
+        className="h-9 px-3 bg-blue-400 border-2 border-blue-700 flex items-center gap-2 text-xs font-bold shrink-0"
         style={{
           boxShadow: 'inset 1px 1px 0 rgba(255,255,255,0.3), inset -1px -1px 0 rgba(0,0,0,0.3)',
         }}
       >
-        <span>🔊</span>
-        <div className="flex flex-col justify-center leading-none">
-          <span className="text-xs">{clock.time}</span>
-          <span className="text-xs">{clock.date}</span>
+        <span className="hidden sm:inline">🔊</span>
+        <div className="flex flex-col justify-center leading-none text-right">
+          <span className="text-[10px]">{clock.time}</span>
+          <span className="text-[9px] opacity-80">{clock.date}</span>
         </div>
       </div>
     </div>

@@ -4,7 +4,7 @@ import Window from './Window';
 import Taskbar from './Taskbar';
 import BSOD from './BSOD';
 import PasswordDialog from './PasswordDialog';
-import { FolderData, WindowState, FolderPosition } from '../types';
+import { FolderData, WindowState } from '../types';
 import LookbookContent from './contents/LookbookContent';
 import EditorialsContent from './contents/EditorialsContent';
 import AIModelsContent from './contents/AIModelsContent';
@@ -15,12 +15,16 @@ const folderNames: FolderData[] = [
   { id: 'editorials', name: 'Editorials', icon: '📁', position: { x: 20, y: 120 } },
   { id: 'ai-models', name: 'AI-models', icon: '📁', position: { x: 20, y: 220 } },
   { id: 'contacts', name: 'Contacts', icon: '📁', position: { x: 20, y: 320 } },
+  { id: 'password-file', name: 'AI Models Password.txt', icon: '📄', position: { x: 140, y: 20 } },
 ];
 
-const getRandomPosition = () => ({
-  x: Math.random() * (window.innerWidth - 150),
-  y: Math.random() * (window.innerHeight - 250),
-});
+const getRandomPosition = () => {
+  const isMobile = window.innerWidth < 600;
+  return {
+    x: Math.random() * (window.innerWidth - (isMobile ? 100 : 150)),
+    y: Math.random() * (window.innerHeight - (isMobile ? 200 : 250)),
+  };
+};
 
 function Desktop() {
   const [folders, setFolders] = useState<FolderData[]>([]);
@@ -60,38 +64,36 @@ function Desktop() {
     const existingWindow = windows.find(w => w.id === folderId);
 
     if (existingWindow) {
-      if (existingWindow.isMinimized) {
-        setWindows(windows.map(w =>
-          w.id === folderId
-            ? { ...w, isMinimized: false, zIndex: maxZIndex + 1 }
-            : w
-        ));
-        setMaxZIndex(maxZIndex + 1);
-      } else {
-        setWindows(windows.map(w =>
-          w.id === folderId
-            ? { ...w, zIndex: maxZIndex + 1 }
-            : w
-        ));
-        setMaxZIndex(maxZIndex + 1);
-      }
+      setWindows(windows.map(w =>
+        w.id === folderId
+          ? { ...w, isMinimized: false, zIndex: maxZIndex + 1 }
+          : w
+      ));
+      setMaxZIndex(prev => prev + 1);
     } else {
+      const folderInfo = folderNames.find(f => f.id === folderId);
+      const isMobile = window.innerWidth < 600;
+
       const newWindow: WindowState = {
         id: folderId,
-        title: folders.find(f => f.id === folderId)?.name || '',
+        title: folderInfo?.name || '',
         isOpen: true,
         isMinimized: false,
-        position: { x: 100 + windows.length * 30, y: 80 + windows.length * 30 },
-        size: { width: 800, height: 600 },
+        position: isMobile 
+          ? { x: 5, y: 45 } 
+          : { x: 100 + (windows.length * 20), y: 80 + (windows.length * 20) },
+        size: isMobile 
+          ? { width: window.innerWidth - 10, height: window.innerHeight - 110 }
+          : (folderId === 'password-file' ? { width: 350, height: 250 } : { width: 800, height: 600 }),
         zIndex: maxZIndex + 1,
       };
       setWindows([...windows, newWindow]);
-      setMaxZIndex(maxZIndex + 1);
+      setMaxZIndex(prev => prev + 1);
     }
   };
 
   const handleFolderClick = (folderId: string) => {
-    if (Math.random() < 0.01) {
+    if (Math.random() < 0.005) {
       setShowBSOD(true);
       return;
     }
@@ -106,26 +108,37 @@ function Desktop() {
   };
 
   const handleCloseWindow = (windowId: string) => {
-    setWindows(windows.filter(w => w.id !== windowId));
+    setWindows(prev => prev.filter(w => w.id !== windowId));
   };
 
   const handleMinimizeWindow = (windowId: string) => {
-    setWindows(windows.map(w =>
+    setWindows(prev => prev.map(w =>
       w.id === windowId ? { ...w, isMinimized: true } : w
     ));
   };
 
   const handleBringToFront = (windowId: string) => {
-    setWindows(windows.map(w =>
+    setWindows(prev => prev.map(w =>
       w.id === windowId ? { ...w, zIndex: maxZIndex + 1 } : w
     ));
-    setMaxZIndex(maxZIndex + 1);
+    setMaxZIndex(prev => prev + 1);
   };
 
   const handleUpdateWindow = (windowId: string, updates: Partial<WindowState>) => {
-    setWindows(windows.map(w =>
-      w.id === windowId ? { ...w, ...updates } : w
-    ));
+    setWindows(prev => prev.map(w => {
+      if (w.id === windowId) {
+        const updated = { ...w, ...updates };
+        if (updates.position) {
+          // ИСПРАВЛЕННАЯ ЛОГИКА ГРАНИЦ: Окно не улетает за пределы видимости
+          updated.position = {
+            x: Math.max(0, Math.min(updates.position.x, window.innerWidth - (updated.size?.width || 50))),
+            y: Math.max(0, Math.min(updates.position.y, window.innerHeight - (updated.size?.height || 50) - 48))
+          };
+        }
+        return updated;
+      }
+      return w;
+    }));
   };
 
   const handleBSODRestart = () => {
@@ -136,7 +149,7 @@ function Desktop() {
   };
 
   const handleFolderDrag = (folderId: string, x: number, y: number) => {
-    setFolders(folders.map(f =>
+    setFolders(prev => prev.map(f =>
       f.id === folderId
         ? { ...f, position: { x: Math.max(0, x), y: Math.max(0, y) } }
         : f
@@ -145,32 +158,36 @@ function Desktop() {
 
   const getWindowContent = (windowId: string) => {
     switch (windowId) {
-      case 'lookbook':
-        return <LookbookContent />;
-      case 'editorials':
-        return <EditorialsContent />;
-      case 'ai-models':
-        return <AIModelsContent />;
-      case 'contacts':
-        return <ContactsContent />;
-      default:
-        return null;
+      case 'lookbook': return <LookbookContent />;
+      case 'editorials': return <EditorialsContent />;
+      case 'ai-models': return <AIModelsContent />;
+      case 'contacts': return <ContactsContent />;
+      case 'password-file': return (
+        <div className="p-4 bg-white font-mono text-black h-full select-text cursor-text overflow-y-auto">
+          <div className="border-b-2 border-gray-200 mb-4 pb-2 text-[10px] text-gray-400 uppercase tracking-widest">
+            I.AI System Notepad v1.0
+          </div>
+          <p className="text-lg font-bold">PASSWORD: 1234</p>
+          <div className="mt-12 text-[9px] text-gray-400 leading-tight">
+            --- INTERNAL USE ONLY ---<br />
+            This file contains sensitive credentials.<br />
+            Unauthorized access is prohibited.
+          </div>
+        </div>
+      );
+      default: return null;
     }
   };
 
-  if (showBSOD) {
-    return <BSOD onRestart={handleBSODRestart} />;
-  }
+  if (showBSOD) return <BSOD onRestart={handleBSODRestart} />;
 
   return (
     <div
-      className="h-screen w-screen bg-cover bg-center relative overflow-hidden"
+      className="h-screen w-screen bg-cover bg-center relative overflow-hidden select-none"
       style={{
-        backgroundImage: 'url("https://images.pexels.com/photos/3280130/pexels-photo-3280130.jpeg?auto=compress&cs=tinysrgb&w=2000&h=2000&fit=crop")',
+        backgroundImage: 'url("/BG1.png")',
         fontFamily: '"MS Sans Serif", "Pixelify Sans", monospace',
         imageRendering: 'pixelated',
-        filter: 'pixelate(8px)',
-        WebkitFilter: 'pixelate(8px)',
       }}
     >
       {showPasswordDialog && (
@@ -183,6 +200,7 @@ function Desktop() {
           failedAttempts={passwordAttempts}
         />
       )}
+
       {folders.map(folder => (
         <FolderIcon
           key={folder.id}
@@ -193,9 +211,14 @@ function Desktop() {
       ))}
 
       {windows.map(window => (
-        !window.isMinimized && (
+        <div 
+          key={window.id} 
+          style={{ 
+            display: window.isMinimized ? 'none' : 'block',
+            zIndex: window.zIndex 
+          }}
+        >
           <Window
-            key={window.id}
             window={window}
             onClose={handleCloseWindow}
             onMinimize={handleMinimizeWindow}
@@ -204,12 +227,19 @@ function Desktop() {
           >
             {getWindowContent(window.id)}
           </Window>
-        )
+        </div>
       ))}
 
       <Taskbar
         windows={windows}
-        onWindowClick={handleFolderClick}
+        onWindowClick={(id) => {
+          const win = windows.find(w => w.id === id);
+          if (win?.isMinimized) {
+            openFolderWindow(id);
+          } else {
+            handleBringToFront(id);
+          }
+        }}
       />
     </div>
   );

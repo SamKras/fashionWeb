@@ -1,95 +1,172 @@
+import { useState, useEffect } from 'react';
+
 function AIModelsContent() {
+  const [activeModel, setActiveModel] = useState<number | null>(null);
+  const [currentIndex, setCurrentIndex] = useState<number | null>(null);
+
+  // Структура данных для твоих моделей
   const models = [
     {
-      name: 'NOVA-X1',
-      img: 'https://images.pexels.com/photos/2690323/pexels-photo-2690323.jpeg?auto=compress&cs=tinysrgb&w=300',
+      id: 1,
+      name: 'NEURAL-ENTITY-01',
+      cover: '/MOD12.png',
       status: 'ONLINE',
-      specs: 'Neural Processing Unit v3.4',
+      specs: 'Cortex Style Matrix v4.2',
+      images: ['/MOD11.png', '/MOD12.png', '/MOD13.png', '/MOD14.png']
     },
     {
-      name: 'CIPHER-7',
-      img: 'https://images.pexels.com/photos/1898555/pexels-photo-1898555.jpeg?auto=compress&cs=tinysrgb&w=300',
-      status: 'ONLINE',
-      specs: 'Quantum Style Engine',
-    },
-    {
-      name: 'AURORA-9',
-      img: 'https://images.pexels.com/photos/2787341/pexels-photo-2787341.jpeg?auto=compress&cs=tinysrgb&w=300',
-      status: 'TRAINING',
-      specs: 'Deep Fashion Network',
-    },
+      id: 2,
+      name: 'CYBER-SOUL-02',
+      cover: '/MOD22.png',
+      status: 'STABLE',
+      specs: 'Deep Vision Synth v1.0',
+      images: ['/MOD21.png', '/MOD22.png', '/MOD23.png', '/MOD24.png']
+    }
   ];
 
-  return (
-    <div className="p-4 bg-black min-h-full">
-      <div className="border-4 border-green-500 bg-black p-4 mb-4">
-        <div className="text-green-500 font-mono text-sm mb-2">
-          <span className="animate-pulse">▸</span> SYSTEM INITIALIZED
+  // Слайдер внутри модели
+  const showNext = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (currentIndex !== null && activeModel !== null) {
+      const currentImages = models.find(m => m.id === activeModel)?.images || [];
+      setCurrentIndex((currentIndex + 1) % currentImages.length);
+    }
+  };
+
+  const showPrev = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (currentIndex !== null && activeModel !== null) {
+      const currentImages = models.find(m => m.id === activeModel)?.images || [];
+      setCurrentIndex((currentIndex - 1 + currentImages.length) % currentImages.length);
+    }
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (currentIndex !== null) {
+        if (e.key === 'ArrowRight') showNext();
+        if (e.key === 'ArrowLeft') showPrev();
+        if (e.key === 'Escape') setCurrentIndex(null);
+      } else if (activeModel !== null && e.key === 'Escape') {
+        setActiveModel(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentIndex, activeModel]);
+
+  // ЭКРАН 1: СПИСОК МОДЕЛЕЙ
+  if (activeModel === null) {
+    return (
+      <div className="p-4 bg-black min-h-full font-mono">
+        <div className="border-4 border-green-500 bg-black p-4 mb-4">
+          <div className="text-green-500 text-sm mb-2">
+            <span className="animate-pulse">▸</span> SYSTEM_CORE_ACCESS: GRANTED
+          </div>
+          <h1 className="text-green-500 text-2xl font-bold uppercase tracking-tighter">
+            AI_AGENT_DATABASE v3.0
+          </h1>
         </div>
-        <h1 className="text-green-500 font-mono text-2xl font-bold">
-          AI MODEL DATABASE v2.0
-        </h1>
+
+        <div className="grid grid-cols-1 gap-6">
+          {models.map((model) => (
+            <div
+              key={model.id}
+              onClick={() => setActiveModel(model.id)}
+              className="border-4 border-green-500 bg-black p-4 cursor-pointer hover:bg-green-900/20 transition-all group"
+            >
+              <div className="flex gap-6">
+                <div className="relative">
+                  <img
+                    src={model.cover}
+                    alt={model.name}
+                    className="w-40 h-40 object-cover border-2 border-green-500 grayscale group-hover:grayscale-0"
+                    style={{ imageRendering: 'pixelated' }}
+                  />
+                  <div className="absolute bottom-0 left-0 bg-green-500 text-black px-2 py-1 text-[10px] font-bold">
+                    ID_00{model.id}
+                  </div>
+                </div>
+
+                <div className="flex-1 text-green-500">
+                  <h3 className="text-2xl font-bold mb-2 tracking-widest">{model.name}</h3>
+                  <div className="space-y-1 text-xs uppercase">
+                    <div><span className="text-green-800">[STATUS]:</span> {model.status}</div>
+                    <div><span className="text-green-800">[SPECS]:</span> {model.specs}</div>
+                    <div><span className="text-green-800">[ASSETS]:</span> {model.images.length} FILES FOUND</div>
+                  </div>
+                  <div className="mt-6 flex gap-4">
+                    <div className="px-4 py-1 bg-green-500 text-black font-bold text-xs uppercase animate-pulse">
+                      DEPLOY_UNIT
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // ЭКРАН 2: ВНУТРИ КАРТОЧКИ МОДЕЛИ (ГАЛЕРЕЯ)
+  const currentModelData = models.find(m => m.id === activeModel)!;
+
+  return (
+    <div className="p-4 bg-black min-h-full font-mono text-green-500 relative">
+      <div className="flex justify-between items-center mb-6 border-b-2 border-green-900 pb-2">
+        <button 
+          onClick={() => setActiveModel(null)}
+          className="bg-green-500 text-black px-3 py-1 font-bold text-xs hover:bg-green-400"
+        >
+          &lt; BACK_TO_MAIN
+        </button>
+        <span className="text-xs">{currentModelData.name} // ASSET_VIEWER</span>
       </div>
 
-      <div className="grid grid-cols-1 gap-4">
-        {models.map((model, index) => (
+      <div className="grid grid-cols-4 gap-4">
+        {currentModelData.images.map((img, index) => (
           <div
             key={index}
-            className="border-4 border-green-500 bg-gray-900 p-4 hover:bg-gray-800 transition-colors"
+            onClick={() => setCurrentIndex(index)}
+            className="border-2 border-green-500 p-1 bg-black cursor-pointer hover:border-white transition-colors"
           >
-            <div className="flex gap-4">
-              <div className="relative">
-                <img
-                  src={model.img}
-                  alt={model.name}
-                  className="w-32 h-32 object-cover border-2 border-green-500"
-                  style={{ imageRendering: 'pixelated' }}
-                />
-                <div className="absolute top-0 right-0 bg-green-500 text-black px-2 py-1 text-xs font-bold">
-                  {model.status}
-                </div>
-              </div>
-
-              <div className="flex-1 text-green-500 font-mono">
-                <h3 className="text-xl font-bold mb-2">{model.name}</h3>
-                <div className="space-y-1 text-sm">
-                  <div>
-                    <span className="text-green-300">STATUS:</span> {model.status}
-                  </div>
-                  <div>
-                    <span className="text-green-300">SPECS:</span> {model.specs}
-                  </div>
-                  <div>
-                    <span className="text-green-300">VERSION:</span> 3.{index + 1}.{Math.floor(Math.random() * 10)}
-                  </div>
-                  <div>
-                    <span className="text-green-300">ACCURACY:</span> {95 + index}%
-                  </div>
-                </div>
-
-                <div className="mt-3 flex gap-2">
-                  <button className="px-3 py-1 bg-green-500 text-black font-bold text-xs hover:bg-green-400">
-                    DEPLOY
-                  </button>
-                  <button className="px-3 py-1 border-2 border-green-500 text-green-500 font-bold text-xs hover:bg-green-500 hover:text-black">
-                    CONFIGURE
-                  </button>
-                </div>
-              </div>
+            <img
+              src={img}
+              alt="Asset"
+              className="w-full aspect-square object-cover"
+              style={{ imageRendering: 'pixelated' }}
+            />
+            <div className="text-[10px] mt-1 text-center truncate">
+              {img.replace('/', '')}
             </div>
           </div>
         ))}
       </div>
 
-      <div className="mt-4 border-4 border-green-500 bg-gray-900 p-4 text-green-500 font-mono text-xs">
-        <div>$ system_status --verbose</div>
-        <div className="mt-2">
-          [OK] Neural networks synchronized<br />
-          [OK] Fashion algorithms loaded<br />
-          [OK] Style matrix computed<br />
-          <span className="animate-pulse">▸</span> Ready for deployment
+      {/* МОДАЛЬНОЕ ОКНО (СЛАЙДЕР) */}
+      {currentIndex !== null && (
+        <div 
+          className="fixed inset-0 bg-black/95 z-[9999] flex items-center justify-center p-4"
+          onClick={() => setCurrentIndex(null)}
+        >
+          <button onClick={showPrev} className="absolute left-4 text-green-500 text-5xl p-4 hover:text-white">‹</button>
+          
+          <div className="relative border-4 border-green-500">
+            <img 
+              src={currentModelData.images[currentIndex]} 
+              className="max-w-full max-h-[80vh] object-contain"
+              alt="Full view"
+              onClick={(e) => e.stopPropagation()} 
+            />
+            <div className="absolute -bottom-10 left-0 right-0 text-center text-xs">
+              FILE: {currentModelData.images[currentIndex]} | {currentIndex + 1} / {currentModelData.images.length}
+            </div>
+          </div>
+
+          <button onClick={showNext} className="absolute right-4 text-green-500 text-5xl p-4 hover:text-white">›</button>
         </div>
-      </div>
+      )}
     </div>
   );
 }
