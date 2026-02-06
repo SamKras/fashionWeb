@@ -1,55 +1,57 @@
+import React from 'react';
+
 interface BSODProps {
   onRestart: () => void;
 }
 
-function BSOD({ onRestart }: BSODProps) {
+const BSOD: React.FC<BSODProps> = ({ onRestart }) => {
   return (
-    <div
-      className="h-screen w-screen bg-blue-900 text-white flex items-center justify-center"
-      style={{
-        fontFamily: '"MS Sans Serif", "Pixelify Sans", monospace',
-        imageRendering: 'pixelated',
-      }}
-    >
-      <div className="max-w-3xl px-8">
-        <div className="text-center space-y-8">
-          <div className="text-6xl font-bold mb-8">:(</div>
+    <div className="fixed inset-0 bg-[#0000aa] text-white p-6 md:p-10 font-mono z-[9999] flex flex-col justify-start select-none cursor-default overflow-y-auto">
+      <div className="max-w-4xl">
+        <div className="bg-white text-[#0000aa] inline-block px-2 mb-6 font-bold uppercase">
+          CRITICAL_EXCEPTION
+        </div>
+        
+        <h1 className="text-2xl md:text-3xl mb-8 font-bold text-white uppercase">
+          A PROBLEM HAS BEEN DETECTED
+        </h1>
+        
+        <p className="mb-6 text-lg md:text-xl">
+          ERROR_CODE: BETTER_QUALITY_NOT_FOUND (0x0000007B)
+        </p>
 
-          <h1 className="text-3xl font-bold mb-4">
-            A problem has been detected and Windows has been shut down to prevent damage to your computer.
-          </h1>
+        <p className="mb-6 leading-relaxed">
+          The system attempt to find "cheaper competitors" resulted in a fatal exception. 
+          Your computer knows that nobody provides better service and quality than we do. 
+          Searching for alternatives has overwhelmed the processor's logic.
+        </p>
 
-          <div className="text-xl font-bold text-red-400 mb-6">
-            SYSTEM ERROR: STYLE_TOO_SHARP
-          </div>
+        <p className="mb-8 leading-relaxed">
+          * Stop searching for competitors; it upsets the CPU.<br />
+          * Return to viewing our high-end digital works.<br />
+          * Trust the system: you are already in the right place.
+        </p>
 
-          <div className="text-left space-y-2 text-sm bg-blue-800 p-6 border-2 border-white">
-            <p>If this is the first time you've seen this stop error screen,</p>
-            <p>restart your computer. If this screen appears again, follow</p>
-            <p>these steps:</p>
-            <br />
-            <p>Check to make sure your style is properly configured.</p>
-            <p>If problems continue, disable or remove any newly installed</p>
-            <p>fashion accessories. Disable FASHION_MODE in your wardrobe settings.</p>
-            <br />
-            <p>Technical information:</p>
-            <br />
-            <p>*** STOP: 0x000000F4 (0x00000003, 0x87E0B030, 0x87E0B1A4, 0x805DB03C)</p>
-          </div>
+        <div className="space-y-1 mb-10 opacity-80 text-xs md:text-sm">
+          <p>Technical Information:</p>
+          <p>*** STOP: 0x00000001 (BEST_CHOICE_ALREADY_MADE)</p>
+          <p>*** REFRESH_TO_CONTINUE.sys - Address F84B521A base at F84B5000</p>
+        </div>
 
-          <button
-            onClick={onRestart}
-            className="mt-8 px-8 py-3 bg-gray-300 hover:bg-gray-400 text-black font-bold border-4 border-white"
-            style={{
-              boxShadow: 'inset 0 0 0 2px #000, 4px 4px 0 rgba(0,0,0,0.5)',
-            }}
-          >
-            RESTART SYSTEM
-          </button>
+        {/* КНОПКА ПЕРЕЗАГРУЗКИ */}
+        <button 
+          onClick={onRestart}
+          className="mt-4 px-6 py-3 bg-white text-[#0000aa] font-bold hover:bg-gray-200 transition-colors uppercase shadow-[4px_4px_0_rgba(0,0,0,0.5)] active:translate-y-1 active:shadow-none"
+        >
+          {'>'} Restart System
+        </button>
+
+        <div className="mt-8 animate-pulse text-sm opacity-70">
+          Press the button above to return to excellence...
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default BSOD;

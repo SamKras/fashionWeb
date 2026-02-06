@@ -5,16 +5,20 @@ import Taskbar from './Taskbar';
 import BSOD from './BSOD';
 import PasswordDialog from './PasswordDialog';
 import { FolderData, WindowState } from '../types';
+
+// Импорты контента
 import LookbookContent from './contents/LookbookContent';
 import EditorialsContent from './contents/EditorialsContent';
 import AIModelsContent from './contents/AIModelsContent';
 import ContactsContent from './contents/ContactsContent';
+import ServicesGameContent from './contents/ServicesGameContent';
 
 const folderNames: FolderData[] = [
   { id: 'lookbook', name: 'Lookbook', icon: '📁', position: { x: 20, y: 20 } },
   { id: 'editorials', name: 'Editorials', icon: '📁', position: { x: 20, y: 120 } },
   { id: 'ai-models', name: 'AI-models', icon: '📁', position: { x: 20, y: 220 } },
   { id: 'contacts', name: 'Contacts', icon: '📁', position: { x: 20, y: 320 } },
+  { id: 'services', name: 'SERVICES AND PRICES', icon: '💾', position: { x: 140, y: 120 } }, 
   { id: 'password-file', name: 'AI Models Password.txt', icon: '📄', position: { x: 140, y: 20 } },
 ];
 
@@ -161,6 +165,8 @@ function Desktop() {
       case 'editorials': return <EditorialsContent />;
       case 'ai-models': return <AIModelsContent />;
       case 'contacts': return <ContactsContent />;
+      // ПЕРЕДАЕМ onTriggerBSOD В КОМПОНЕНТ ИГРЫ
+      case 'services': return <ServicesGameContent onTriggerBSOD={() => setShowBSOD(true)} />; 
       case 'password-file': return (
         <div className="p-4 bg-white font-mono text-black h-full select-text cursor-text overflow-y-auto">
           <div className="border-b-2 border-gray-200 mb-4 pb-2 text-[10px] text-gray-400 uppercase tracking-widest">
@@ -184,7 +190,6 @@ function Desktop() {
     <div
       className="h-screen w-screen bg-cover bg-center relative overflow-hidden select-none"
       style={{
-        // ИСПРАВЛЕНО: Добавлена точка (./) для корректной работы путей на GitHub Pages
         backgroundImage: 'url("./BG1.png")',
         fontFamily: '"MS Sans Serif", "Pixelify Sans", monospace',
         imageRendering: 'pixelated',
