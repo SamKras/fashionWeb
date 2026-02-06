@@ -3,10 +3,10 @@ import { useState, useEffect } from 'react';
 function LookbookContent() {
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
 
-  // Твои файлы CP и JG
+  // ИСПРАВЛЕНО: Добавлены точки (./) перед именами файлов для GitHub Pages
   const images = [
-    '/CP1.png', '/CP2.png', '/CP3.png', 
-    '/JG1.jpg', '/JG2.jpg', '/JG3.jpg', '/JG4.jpg', '/JG5.jpg'
+    './CP1.png', './CP2.png', './CP3.png', 
+    './JG1.jpg', './JG2.jpg', './JG3.jpg', './JG4.jpg', './JG5.jpg'
   ];
 
   // Функции переключения
@@ -42,7 +42,8 @@ function LookbookContent() {
         📸 Lookbook Gallery
       </div>
 
-      <div className="grid grid-cols-4 gap-4">
+      {/* Сетка миниатюр */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {images.map((img, index) => (
           <div
             key={index}
@@ -58,7 +59,7 @@ function LookbookContent() {
               className="w-full h-32 object-cover"
               style={{ imageRendering: 'pixelated' }}
             />
-            <div className="text-xs mt-2 font-bold text-center">
+            <div className="text-[10px] mt-2 font-bold text-center truncate">
               Look_{index + 1}.jpg
             </div>
           </div>
@@ -74,14 +75,14 @@ function LookbookContent() {
           {/* Кнопка Назад */}
           <button 
             onClick={showPrev}
-            className="absolute left-4 text-white text-5xl hover:text-blue-400 p-4 z-[10000]"
+            className="absolute left-2 md:left-4 text-white text-5xl hover:text-blue-400 p-4 z-[10000]"
           >
             ‹
           </button>
 
           <img 
             src={images[currentIndex]} 
-            className="max-w-full max-h-[85vh] border-4 border-white shadow-2xl"
+            className="max-w-full max-h-[75vh] md:max-h-[85vh] border-4 border-white shadow-2xl"
             alt="Full view"
             onClick={(e) => e.stopPropagation()} 
           />
@@ -89,17 +90,17 @@ function LookbookContent() {
           {/* Кнопка Вперед */}
           <button 
             onClick={showNext}
-            className="absolute right-4 text-white text-5xl hover:text-blue-400 p-4 z-[10000]"
+            className="absolute right-2 md:right-4 text-white text-5xl hover:text-blue-400 p-4 z-[10000]"
           >
             ›
           </button>
 
           {/* Инфо-панель снизу */}
-          <div className="absolute bottom-10 flex flex-col items-center gap-2">
-            <div className="bg-blue-600 text-white px-4 py-1 text-sm font-mono border-2 border-white shadow-lg">
+          <div className="absolute bottom-6 md:bottom-10 flex flex-col items-center gap-2">
+            <div className="bg-blue-600 text-white px-4 py-1 text-xs md:text-sm font-mono border-2 border-white shadow-lg">
               {currentIndex + 1} / {images.length} — Look_{currentIndex + 1}.jpg
             </div>
-            <div className="text-gray-400 text-xs uppercase tracking-widest">
+            <div className="text-gray-400 text-[10px] uppercase tracking-widest hidden md:block">
               Click outside or press ESC to close
             </div>
           </div>

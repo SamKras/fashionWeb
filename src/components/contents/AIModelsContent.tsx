@@ -4,23 +4,23 @@ function AIModelsContent() {
   const [activeModel, setActiveModel] = useState<number | null>(null);
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
 
-  // Структура данных для твоих моделей
+  // ИСПРАВЛЕНО: Все пути теперь начинаются с ./ для корректной работы деплоя
   const models = [
     {
       id: 1,
       name: 'NEURAL-ENTITY-01',
-      cover: '/MOD12.png',
+      cover: './MOD12.png',
       status: 'ONLINE',
       specs: 'Cortex Style Matrix v4.2',
-      images: ['/MOD11.png', '/MOD12.png', '/MOD13.png', '/MOD14.png']
+      images: ['./MOD11.png', './MOD12.png', './MOD13.png', './MOD14.png']
     },
     {
       id: 2,
       name: 'CYBER-SOUL-02',
-      cover: '/MOD22.png',
+      cover: './MOD22.png',
       status: 'STABLE',
       specs: 'Deep Vision Synth v1.0',
-      images: ['/MOD21.png', '/MOD22.png', '/MOD23.png', '/MOD24.png']
+      images: ['./MOD21.png', './MOD22.png', './MOD23.png', './MOD24.png']
     }
   ];
 
@@ -75,12 +75,12 @@ function AIModelsContent() {
               onClick={() => setActiveModel(model.id)}
               className="border-4 border-green-500 bg-black p-4 cursor-pointer hover:bg-green-900/20 transition-all group"
             >
-              <div className="flex gap-6">
+              <div className="flex flex-col md:flex-row gap-6">
                 <div className="relative">
                   <img
                     src={model.cover}
                     alt={model.name}
-                    className="w-40 h-40 object-cover border-2 border-green-500 grayscale group-hover:grayscale-0"
+                    className="w-full md:w-40 h-40 object-cover border-2 border-green-500 grayscale group-hover:grayscale-0"
                     style={{ imageRendering: 'pixelated' }}
                   />
                   <div className="absolute bottom-0 left-0 bg-green-500 text-black px-2 py-1 text-[10px] font-bold">
@@ -121,10 +121,10 @@ function AIModelsContent() {
         >
           &lt; BACK_TO_MAIN
         </button>
-        <span className="text-xs">{currentModelData.name} // ASSET_VIEWER</span>
+        <span className="text-xs truncate ml-2">{currentModelData.name} // ASSET_VIEWER</span>
       </div>
 
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {currentModelData.images.map((img, index) => (
           <div
             key={index}
@@ -137,8 +137,8 @@ function AIModelsContent() {
               className="w-full aspect-square object-cover"
               style={{ imageRendering: 'pixelated' }}
             />
-            <div className="text-[10px] mt-1 text-center truncate">
-              {img.replace('/', '')}
+            <div className="text-[8px] md:text-[10px] mt-1 text-center truncate">
+              {img.replace('./', '')}
             </div>
           </div>
         ))}
@@ -150,21 +150,21 @@ function AIModelsContent() {
           className="fixed inset-0 bg-black/95 z-[9999] flex items-center justify-center p-4"
           onClick={() => setCurrentIndex(null)}
         >
-          <button onClick={showPrev} className="absolute left-4 text-green-500 text-5xl p-4 hover:text-white">‹</button>
+          <button onClick={showPrev} className="absolute left-2 md:left-4 text-green-500 text-3xl md:text-5xl p-4 hover:text-white">‹</button>
           
-          <div className="relative border-4 border-green-500">
+          <div className="relative border-2 md:border-4 border-green-500">
             <img 
               src={currentModelData.images[currentIndex]} 
-              className="max-w-full max-h-[80vh] object-contain"
+              className="max-w-full max-h-[70vh] md:max-h-[80vh] object-contain"
               alt="Full view"
               onClick={(e) => e.stopPropagation()} 
             />
-            <div className="absolute -bottom-10 left-0 right-0 text-center text-xs">
+            <div className="absolute -bottom-10 left-0 right-0 text-center text-[10px] md:text-xs">
               FILE: {currentModelData.images[currentIndex]} | {currentIndex + 1} / {currentModelData.images.length}
             </div>
           </div>
 
-          <button onClick={showNext} className="absolute right-4 text-green-500 text-5xl p-4 hover:text-white">›</button>
+          <button onClick={showNext} className="absolute right-2 md:right-4 text-green-500 text-3xl md:text-5xl p-4 hover:text-white">›</button>
         </div>
       )}
     </div>

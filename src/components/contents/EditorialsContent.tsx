@@ -3,11 +3,11 @@ import { useState, useEffect } from 'react';
 function EditorialsContent() {
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
 
-  // Список твоих EDIT-файлов
+  // ИСПРАВЛЕНО: Добавлены точки (./) перед именами файлов для корректной работы на GitHub
   const editorialImages = [
-    '/EDIT1.1.jpg', '/EDIT1.2.jpg', '/EDIT2.1.jpg', 
-    '/EDIT2.2.jpg', '/EDIT2.3.jpg', '/EDIT3.1.jpg',
-    '/EDIT3.2.jpg', '/EDIT3.3.jpg', '/EDIT3.4.jpg'
+    './EDIT1.1.jpg', './EDIT1.2.jpg', './EDIT2.1.jpg', 
+    './EDIT2.2.jpg', './EDIT2.3.jpg', './EDIT3.1.jpg',
+    './EDIT3.2.jpg', './EDIT3.3.jpg', './EDIT3.4.jpg'
   ];
 
   // Функции для переключения
@@ -39,7 +39,7 @@ function EditorialsContent() {
 
   return (
     <div className="p-4 bg-gray-100 min-h-full relative">
-      {/* Заголовок журнала (стилизован под плашку системы) */}
+      {/* Заголовок журнала */}
       <div className="bg-gray-800 text-white px-4 py-3 mb-6 font-bold text-2xl border-4 border-black text-center uppercase tracking-widest">
         I.AI TEAM MAGAZINE
       </div>
@@ -61,8 +61,8 @@ function EditorialsContent() {
         </div>
       </article>
 
-      {/* Сетка галереи (как в Лукбуке) */}
-      <div className="grid grid-cols-4 gap-4">
+      {/* Сетка галереи */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {editorialImages.map((img, index) => (
           <div 
             key={index}
@@ -95,32 +95,32 @@ function EditorialsContent() {
         >
           <button 
             onClick={showPrev}
-            className="absolute left-4 md:left-10 text-white text-5xl hover:text-blue-400 p-4 z-[10000]"
+            className="absolute left-2 md:left-10 text-white text-5xl hover:text-blue-400 p-4 z-[10000]"
           >
             ‹
           </button>
 
           <img 
             src={editorialImages[currentIndex]} 
-            className="max-w-full max-h-[85vh] border-4 border-white shadow-2xl"
+            className="max-w-full max-h-[75vh] md:max-h-[85vh] border-4 border-white shadow-2xl"
             alt="Full size"
             onClick={(e) => e.stopPropagation()} 
           />
 
           <button 
             onClick={showNext}
-            className="absolute right-4 md:right-10 text-white text-5xl hover:text-blue-400 p-4 z-[10000]"
+            className="absolute right-2 md:right-10 text-white text-5xl hover:text-blue-400 p-4 z-[10000]"
           >
             ›
           </button>
 
           <div className="absolute bottom-10 flex flex-col items-center gap-2">
-            <div className="bg-gray-800 text-white px-4 py-1 text-sm font-mono border-2 border-white shadow-lg">
+            <div className="bg-gray-800 text-white px-4 py-1 text-xs md:text-sm font-mono border-2 border-white shadow-lg">
               {currentIndex + 1} / {editorialImages.length} — ED_{currentIndex + 1}.jpg
             </div>
           </div>
 
-          <button className="absolute top-6 right-6 text-white text-xs font-bold border-2 border-white px-4 py-2 hover:bg-white hover:text-black transition-colors">
+          <button className="absolute top-6 right-6 text-white text-xs font-bold border-2 border-white px-4 py-2 hover:bg-white hover:text-black transition-colors hidden md:block">
             CLOSE [ESC]
           </button>
         </div>

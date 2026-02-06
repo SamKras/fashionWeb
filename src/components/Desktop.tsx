@@ -129,7 +129,6 @@ function Desktop() {
       if (w.id === windowId) {
         const updated = { ...w, ...updates };
         if (updates.position) {
-          // ИСПРАВЛЕННАЯ ЛОГИКА ГРАНИЦ: Окно не улетает за пределы видимости
           updated.position = {
             x: Math.max(0, Math.min(updates.position.x, window.innerWidth - (updated.size?.width || 50))),
             y: Math.max(0, Math.min(updates.position.y, window.innerHeight - (updated.size?.height || 50) - 48))
@@ -185,7 +184,8 @@ function Desktop() {
     <div
       className="h-screen w-screen bg-cover bg-center relative overflow-hidden select-none"
       style={{
-        backgroundImage: 'url("/BG1.png")',
+        // ИСПРАВЛЕНО: Добавлена точка (./) для корректной работы путей на GitHub Pages
+        backgroundImage: 'url("./BG1.png")',
         fontFamily: '"MS Sans Serif", "Pixelify Sans", monospace',
         imageRendering: 'pixelated',
       }}
